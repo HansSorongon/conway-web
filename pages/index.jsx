@@ -11,11 +11,16 @@ import {
 import Title from '../components/Title'
 
 
-const Home = () => {
+const Home = (tick) => {
   const [count, setCount] = useState(0)
+  const [loopCount, setLoopCount] = useState(0)
   const [background, setBackground] = useState([])
 
-  const getFrame = (arrHeight, arrLength) => {
+  const getFrame = (count) => {
+
+    const arrHeight = Math.ceil(screen.height / 15)
+    const arrLength = Math.ceil(screen.width / 15)
+
     let frameTest = [
       [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -36,31 +41,41 @@ const Home = () => {
       frame.push(line)
     }
 
-    frame[10][10] = 1
+    if (count < arrHeight - 10) {
+      console.log(`count ${count}`)
+      console.log(`frame ${arrHeight}`)
+      frame[5 + 1 * count][2] = 1
+      frame[5 + 1 * count][4] = 1
+      frame[4 + 1 * count][3] = 1
+      frame[3 + 1 * count][4] = 1
+      frame[3 + 1 * count][2] = 1
 
-    let chars = []
-
-    for (let row of frame) {
-      let line = []
-      for (let chr of row) {
-        line.push(<span style={chr == 1 ? {color: 'white', padding: '0px'} : {color: 'black'}}>▉</span>)
-      }
-      line.push(<br/>)
-      chars.push(line)
+      frame[5 + 1 * count][2 + 5] = 1
+      frame[5 + 1 * count][4 + 5] = 1
+      frame[4 + 1 * count][3 + 5] = 1
+      frame[3 + 1 * count][4 + 5] = 1
+      frame[3 + 1 * count][2 + 5] = 1
     }
 
-    return <Box lineHeight='14px'>{chars}</Box>
+    let lines = []
+
+    for (let row of frame) {
+      let line = row.map(chr => <span key={Math.random().toString()} style={chr == 1 ? {color: 'white', padding: '0px'} : {color: 'black'}}>▉</span>)
+      line.push(<br key={Math.random().toString()}/>)
+      lines.push(line)
+    }
+
+    return <Box lineHeight='14px'>{lines}</Box>
   }
 
   // animation loop
   useEffect(() => {
 
-    const arrHeight = Math.ceil(screen.height / 15)
-    const arrLength = Math.ceil(screen.width / 15)
-
-    setBackground(getFrame(arrHeight, arrLength))
-
-    const id = setInterval(() => setCount((count) => count + 1), 100) // change frame here
+    const id = setInterval(() => {
+      let newCount = count++
+      setCount(newCount)
+      setBackground(getFrame(newCount))
+    }, 1000)
     return () => {
       clearInterval(id)
     }
