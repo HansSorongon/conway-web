@@ -7,71 +7,118 @@ import {
   Heading,
   Container,
 } from '@chakra-ui/react'
+import { displayStructures } from './structures.js'
 
 import Title from '../components/Title'
 
+var started = 0
 
-const Home = (tick) => {
-  const [count, setCount] = useState(0)
-  const [loopCount, setLoopCount] = useState(0)
-  const [background, setBackground] = useState([])
+const updatePositions = (count, frame) => {
 
-  const getFrame = (count) => {
+  displayStructures(count, frame)
 
-    const arrHeight = Math.ceil(screen.height / 15)
+  // frame becomes a copy, updatedFrame will be returned
+  // for (let i = 1; 0 < frame.length; i++) {
+  //   if (frame[i]) {
+  //     for (let j = 0; j < frame[i].length; j++) {
+  //       let neighbors = 0
+
+  //       if (i < frame.length - 2 && j < frame[i].length - 2) {
+  //         if (frame[i - 1][j - 1] == 1) { // top left
+  //           neighbors++
+  //         }
+  //         if (frame[i - 1][j] == 1) { // top
+  //           neighbors++
+  //         }
+  //         if (frame[i - 1][j + 1] == 1) { // top right
+  //           neighbors++
+  //           console.log('neighbor detected')
+  //         }
+
+  //         if (frame[i][j - 1] == 1) { // left
+  //           neighbors++
+  //         }
+  //         if (frame[i][j + 1] == 1) { // right
+  //           neighbors++
+  //         }
+
+  //         if (frame[i + 1][j - 1] == 1) { // bottom left
+  //           neighbors++
+  //         }
+  //         if (frame[i + 1][j] == 1)  { // bottom
+  //           neighbors++
+  //         }
+  //         if (frame[i + 1][j + 1] == 1) { // bottom right
+  //           neighbors++
+  //         }
+
+          // // life rules
+
+          // if (frame == 1) { // alive
+          //   if (neighbors < 2) { // underpopulation
+          //     updatedFrame[i][j] = 0
+          //   }
+          //   if (neighbors == 2 || neighbors == 3) { // lives on
+          //     updatedFrame[i][j] = 1
+          //   }
+          //   if (neighbors > 3) { // overpopulation
+          //     updatedFrame[i][j] = 0
+          //   }
+          // }
+          // if (frame[i][j] == 0) { // dead
+          //   if (neighbors == 3) {
+          //     updatedFrame[i][j] = 1
+          //    }
+          // }
+        // }
+        // }
+      // }
+    // }
+  return frame
+}
+
+const getFrame = (count) => {
+
+    const arrHeight = Math.ceil((screen.height / 15) * 1.5)
     const arrLength = Math.ceil(screen.width / 15)
-
-    let frameTest = [
-      [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ]
 
     let frame = []
 
+    // create a 2d array depending on screen size
     for (let i = 0; i < arrHeight; i++) {
       let line = []
       for (let j = 0; j < arrLength; j++) {
-        line.push(0)
+        line.push(0) // 0 is dead 1 is alive
       }
       frame.push(line)
     }
 
-    if (count < arrHeight - 10) {
-      console.log(`count ${count}`)
-      console.log(`frame ${arrHeight}`)
-      frame[5 + 1 * count][2] = 1
-      frame[5 + 1 * count][4] = 1
-      frame[4 + 1 * count][3] = 1
-      frame[3 + 1 * count][4] = 1
-      frame[3 + 1 * count][2] = 1
+    frame = updatePositions(count, frame)
 
-      frame[5 + 1 * count][2 + 5] = 1
-      frame[5 + 1 * count][4 + 5] = 1
-      frame[4 + 1 * count][3 + 5] = 1
-      frame[3 + 1 * count][4 + 5] = 1
-      frame[3 + 1 * count][2 + 5] = 1
-    }
-
+    // create react elements && check for white squares
     let lines = []
-
     for (let row of frame) {
-      let line = row.map(chr => <span key={Math.random().toString()} style={chr == 1 ? {color: 'white', padding: '0px'} : {color: 'black'}}>▉</span>)
+      let line = row.map(chr => <span key={Math.random().toString()}
+      style={chr == 1 ? {color: '#7f7f7f', padding: '0px'} : {color: 'black'}}>■</span>)
       line.push(<br key={Math.random().toString()}/>)
       lines.push(line)
     }
 
     return <Box lineHeight='14px'>{lines}</Box>
-  }
+
+}
+
+const Home = () => {
+  const [count, setCount] = useState(0)
+  const [background, setBackground] = useState([])
 
   // animation loop
+  //
+  // dt to be implemented
+  //
   useEffect(() => {
-
     const id = setInterval(() => {
+
       let newCount = count++
       setCount(newCount)
       setBackground(getFrame(newCount))
@@ -83,7 +130,7 @@ const Home = (tick) => {
 
   return (
     <Box>
-    <Box bg='black' h='calc(180vh)' w='100%' position='absolute' display='flex' justifyContent='center'>
+    <Box bg='black' h='calc(270vh)' w='100%' position='absolute' display='flex' justifyContent='center'>
         <Box color='#bebebe' fontSize='15px'>
           { background }
         </Box>
