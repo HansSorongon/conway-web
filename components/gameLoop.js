@@ -8,8 +8,5 @@ export const gameLoop = (drawSquare, context, frame) => {
       newFrame[i].push(0)
     }
   }
-
-  console.log(newFrame)
-
 }
 
