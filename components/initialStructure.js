@@ -1,4 +1,4 @@
-export const initialStructure = (drawSquare, context) => {
+export const initialStructure = (drawSquare, context, arrDimensions) => {
 
   // pulsar
   drawSquare(10, 10, context) // top left
@@ -33,10 +33,17 @@ export const initialStructure = (drawSquare, context) => {
   drawSquare(11, 5, context)
   drawSquare(10, 5, context)
 
+  // generate initial array
 
+  let frame = []
 
+  for (let i = 0; i < arrDimensions[1]; i++) {
+    frame.push([])
+    for (let j = 0; j < arrDimensions[0]; j++) {
+      frame[i].push(0)
+    }
+  }
 
-
-
+  return frame
 }
 

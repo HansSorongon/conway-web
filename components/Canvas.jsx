@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 
 import { initialStructure } from './initialStructure.js'
+import { gameLoop } from './gameLoop.js'
 
 const Canvas = () => {
   const canvasRef = useRef(null)
@@ -35,7 +36,9 @@ const Canvas = () => {
   let tick = 0
   let i = 0
   let init = false
-  const render = (initialPosition) => {
+  let frame = []
+
+  const render = () => {
     const canvas = canvasRef.current
     canvas.width = window.innerWidth * 2
     canvas.height = window.innerHeight * 2
@@ -43,21 +46,25 @@ const Canvas = () => {
     canvas.style.height = window.innerHeight
     const context = canvas.getContext('2d')
 
-    if (tick % 60 == 0) {
+    if (init == false) {
+      const arrHeight = Math.floor(canvas.height / squareHeight)
+      const arrWidth = Math.floor(canvas.width / squareWidth)
+      const arrDimensions = [arrWidth, arrHeight]
+
+      frame = initialStructure(drawSquare, context, arrDimensions)
+      init = true
+    }
+
+    if (tick % 60 == 0) { // fn per 60 ticks
       i++
     }
 
     drawGrid(canvas.width, canvas.height, context)
 
-    // initial position
-    // if (init == false) {
-      initialStructure(drawSquare, context)
-      init = true
-    // }
-
     // all blocks go here
-
-
+    if (frame) {
+      gameLoop(drawSquare, context, frame)
+    }
 
     tick++
 
