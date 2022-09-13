@@ -1,9 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Box } from '@chakra-ui/react'
 
-import { initialStructure } from './initialStructure.js'
-import { gameLoop } from './gameLoop.js'
-
 const Canvas = () => {
   const canvasRef = useRef(null)
 
@@ -12,9 +9,9 @@ const Canvas = () => {
   const squareWidth = 40
 
   let tick = 0
-  let i = 0
-  let init = false
-  let frame = [{'x': 10, 'y': 10}, {'x': 11, 'y': 11}, {'x': 12, 'y': 12}]
+  let frame = [{'x': 10, 'y': 10}, {'x': 11, 'y': 11}, {'x': 12, 'y': 12}, {'x': 15, 'y': 15}, {'x': 15, 'y': 16}, {'x': 16, 'y': 15}, {'x': 16, 'y': 16}]
+  let newFrame = []
+  let i = 1
 
   const render = (arrWidth, arrHeight, initFrame) => { // -------------------------------------- animation loop
 
@@ -62,14 +59,52 @@ const Canvas = () => {
     // initialize
 
     // frame change
-    if (tick % 60 == 0) {
-      // have the arrays change here
-      i++
+    if (i % 100 == 0) {
+      frame = newFrame
+    }
+    i++
+
+    newFrame = []
+    for (let cell of frame) {
+      drawSquare(cell['x'], cell['y'])
     }
 
     for (let cell of frame) {
-      drawSquare(cell['x'] + i, cell['y'])
+      let liveNeighbors = 0
+      for (let posNeigh of frame) {
+        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the right
+          liveNeighbors++
+        }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
+          liveNeighbors++
+        }
+        if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom
+          liveNeighbors++
+        }
+        if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top
+          liveNeighbors++
+        }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top left
+          liveNeighbors++
+        }
+        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top right
+          liveNeighbors++
+        }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom left
+          liveNeighbors++
+        }
+        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom right
+          liveNeighbors++
+        }
+      }
+
+      if (liveNeighbors === 2 || liveNeighbors === 3) {
+        newFrame.push(cell)
+      }
+
     }
+
+    // any dead cell with === 3 live neighbors become live as if by reproduction
 
     tick++
 
