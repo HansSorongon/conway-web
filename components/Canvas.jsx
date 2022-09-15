@@ -8,8 +8,16 @@ const Canvas = () => {
   const squareHeight = 30
   const squareWidth = 40
 
+
+
   let tick = 0
-  let frame = [{'x': 10, 'y': 10}, {'x': 11, 'y': 11}, {'x': 12, 'y': 12}, {'x': 15, 'y': 15}, {'x': 15, 'y': 16}, {'x': 16, 'y': 15}, {'x': 16, 'y': 16}]
+  let frame = [{'x': 10, 'y': 10}, {'x': 11, 'y': 11}, {'x': 12, 'y': 12}, {'x': 15, 'y': 15}, {'x': 15, 'y': 16}, {'x': 16, 'y': 15}, {'x': 16, 'y': 16}, {'x': 18, 'y': 16},{'x': 17, 'y': 15}]
+
+  for (let i = 0; i < 10; i++) {
+    frame.push({'x': i, 'y': i})
+  }
+
+
   let newFrame = []
   let i = 1
 
@@ -30,8 +38,6 @@ const Canvas = () => {
 
     // grid
     const drawGrid = (width, height) => {
-
-
       for (let i = 1; i <= Math.floor(width / 40); i++) {
         context.beginPath();
         context.moveTo(i * squareWidth, 0);
@@ -64,17 +70,33 @@ const Canvas = () => {
     }
     i++
 
-    newFrame = []
+    newFrame = [] // THIS IS CRUCIAL //
+
     for (let cell of frame) {
       drawSquare(cell['x'], cell['y'])
     }
 
-    for (let cell of frame) {
+    for (let cell of frame) {  // switch to use i based for loop for performance
       let liveNeighbors = 0
       for (let posNeigh of frame) {
+
+        // count number of neighbors
+        // checks if adjacent neighbor is alive
         if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the right
           liveNeighbors++
-        }
+        } else { // fuck this algorithm think of a new one but this carries for now lol
+          let liveAdjNeigh = 0
+          // for (let posAdjNeigh of frame) { // use this to check if dead cell has a neighbor
+          //   if (cell['x'] + 2 == posAdjNeigh['x'] && cell['y'] == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
+          //     liveAdjNeigh++
+          //   }
+          //   if (cell['x'] + 1 == posAdjNeigh['x'] && cell['y'] + 1 == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
+          //     liveAdjNeigh++
+          //   }
+          // }
+          //
+          // this works but runs too slow here ^ O(n^3) shove all into the frame speed control so it just changes whenever it need to.
+
         if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
           liveNeighbors++
         }
@@ -97,16 +119,21 @@ const Canvas = () => {
           liveNeighbors++
         }
       }
+    }
 
+      // check if cell should stay alive UNCOMMENT THIS
       if (liveNeighbors === 2 || liveNeighbors === 3) {
         newFrame.push(cell)
       }
 
-    }
+      // this algo doesn't have frame garbage collection yet so fix this shit
+      // later
 
-    // any dead cell with === 3 live neighbors become live as if by reproduction
+      // check if neighboring cell should spring alive
 
-    tick++
+  } // end for
+
+     tick++
 
     requestAnimationFrame(render)
   }
