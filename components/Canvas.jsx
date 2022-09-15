@@ -66,9 +66,65 @@ const Canvas = () => {
 
     // frame change
     if (i % 100 == 0) {
+      for (let cell of frame) {  // switch to use i based for loop for performance
+        let liveNeighbors = 0
+        for (let posNeigh of frame) {
+
+          // count number of neighbors
+          // checks if adjacent neighbor is alive
+          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the right
+            liveNeighbors++
+          } else { // fuck this algorithm think of a new one but this carries for now lol
+            let liveAdjNeigh = 0
+            // for (let posAdjNeigh of frame) { // use this to check if dead cell has a neighbor
+            //   if (cell['x'] + 2 == posAdjNeigh['x'] && cell['y'] == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
+            //     liveAdjNeigh++
+            //   }
+            //   if (cell['x'] + 1 == posAdjNeigh['x'] && cell['y'] + 1 == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
+            //     liveAdjNeigh++
+            //   }
+            // }
+            //
+            // this works but runs too slow here ^ O(n^3) shove all into the frame speed control so it just changes whenever it need to.
+
+          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
+            liveNeighbors++
+          }
+          if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom
+            liveNeighbors++
+          }
+          if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top
+            liveNeighbors++
+          }
+          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top left
+            liveNeighbors++
+          }
+          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top right
+            liveNeighbors++
+          }
+          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom left
+            liveNeighbors++
+          }
+          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom right
+            liveNeighbors++
+          }
+        }
+      }
+
+        // check if cell should stay alive UNCOMMENT THIS
+      if (liveNeighbors === 2 || liveNeighbors === 3) {
+        newFrame.push(cell)
+      }
+
+        // this algo doesn't have frame garbage collection yet so fix this shit
+        // later
+
+    } // end for
+
       frame = newFrame
-    }
-    i++
+
+  } // end if
+  i++
 
     newFrame = [] // THIS IS CRUCIAL //
 
@@ -76,62 +132,6 @@ const Canvas = () => {
       drawSquare(cell['x'], cell['y'])
     }
 
-    for (let cell of frame) {  // switch to use i based for loop for performance
-      let liveNeighbors = 0
-      for (let posNeigh of frame) {
-
-        // count number of neighbors
-        // checks if adjacent neighbor is alive
-        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the right
-          liveNeighbors++
-        } else { // fuck this algorithm think of a new one but this carries for now lol
-          let liveAdjNeigh = 0
-          // for (let posAdjNeigh of frame) { // use this to check if dead cell has a neighbor
-          //   if (cell['x'] + 2 == posAdjNeigh['x'] && cell['y'] == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
-          //     liveAdjNeigh++
-          //   }
-          //   if (cell['x'] + 1 == posAdjNeigh['x'] && cell['y'] + 1 == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
-          //     liveAdjNeigh++
-          //   }
-          // }
-          //
-          // this works but runs too slow here ^ O(n^3) shove all into the frame speed control so it just changes whenever it need to.
-
-        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
-          liveNeighbors++
-        }
-        if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom
-          liveNeighbors++
-        }
-        if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top
-          liveNeighbors++
-        }
-        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top left
-          liveNeighbors++
-        }
-        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top right
-          liveNeighbors++
-        }
-        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom left
-          liveNeighbors++
-        }
-        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom right
-          liveNeighbors++
-        }
-      }
-    }
-
-      // check if cell should stay alive UNCOMMENT THIS
-      if (liveNeighbors === 2 || liveNeighbors === 3) {
-        newFrame.push(cell)
-      }
-
-      // this algo doesn't have frame garbage collection yet so fix this shit
-      // later
-
-      // check if neighboring cell should spring alive
-
-  } // end for
 
      tick++
 
