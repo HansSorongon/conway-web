@@ -11,7 +11,7 @@ const Canvas = () => {
 
 
   let tick = 0
-  let frame = [{'x': 18, 'y': 16},{'x': 17, 'y': 15}, {'x': 16, 'y': 16}]
+  let frame = [{'x': 18, 'y': 16},{'x': 17, 'y': 15}, {'x': 16, 'y': 16}, {'x': 22, 'y': 16},{'x': 22, 'y': 17}, {'x': 24, 'y': 16} ]
 
   let newFrame = []
   let i = 1
@@ -61,49 +61,64 @@ const Canvas = () => {
 
     // frame change
     if (i % 100 == 0) {
+
       for (let cell of frame) {  // switch to use i based for loop for performance
         let liveNeighbors = 0
         for (let posNeigh of frame) {
-
           // count number of neighbors
           // checks if adjacent neighbor is alive
           if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the right
             liveNeighbors++
-          } else { // this cell is dead BUT can possibly spring to life! check how many neighbors it has
-            let liveAdjNeigh = 0
-            for (let posAdjNeigh of frame) { // use this to check if dead cell has a neighbor
-              if (cell['x'] + 2 == posAdjNeigh['x'] && cell['y'] == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
-                liveAdjNeigh++
+          } else { // means this mofo dead
+
+            let neighbors = 0
+            for (let posAdj of frame) {
+              if (cell['x'] == posAdj['x'] && cell['y'] - 1 == posAdj['y']) { // tl
+                neighbors++
               }
-              if (cell['x'] + 1 == posAdjNeigh['x'] && cell['y'] + 1 == posAdjNeigh['y']) { // if dead cell is on the right of dead neigh
-                liveAdjNeigh++
+              if (cell['x'] + 1 == posAdj['x'] && cell['y'] - 1 == posAdj['y']) { // t
+                neighbors++
+              }
+              if (cell['x'] + 2 == posAdj['x'] && cell['y'] - 1 == posAdj['y']) { // tr
+                neighbors++
+              }
+              if (cell['x'] + 2 == posAdj['x'] && cell['y'] == posAdj['y']) { // r
+                neighbors++
+              }
+              if (cell['x'] == posAdj['x'] && cell['y'] + 1 == posAdj['y']) { // bl
+              }
+              if (cell['x'] + 1 == posAdj['x'] && cell['y'] + 1 == posAdj['y']) { // b
+                neighbors++
+              }
+              if (cell['x'] + 2 == posAdj['x'] && cell['y'] + 1 == posAdj['y']) { // br
+                neighbors++
+              }
+              if (neighbors === 2) {
+                newFrame.push({'x': cell['x'] + 1, 'y': cell['y']})
               }
             }
+          }
 
-
-            // this works but runs too slow here ^ O(n^3) shove all into the frame speed control so it just changes whenever it need to.
-
-          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
-            liveNeighbors++
-          }
-          if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom
-            liveNeighbors++
-          }
-          if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top
-            liveNeighbors++
-          }
-          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top left
-            liveNeighbors++
-          }
-          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top right
-            liveNeighbors++
-          }
-          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom left
-            liveNeighbors++
-          }
-          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom right
-            liveNeighbors++
-          }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) { // if on the left
+          liveNeighbors++
+        }
+        if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom
+          liveNeighbors++
+        }
+        if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top
+          liveNeighbors++
+        }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top left
+          liveNeighbors++
+        }
+        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) { // if on the top right
+          liveNeighbors++
+        }
+        if (cell['x'] - 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom left
+          liveNeighbors++
+        }
+        if (cell['x'] + 1 == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) { // if on the bottom right
+          liveNeighbors++
         }
       }
 
