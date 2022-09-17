@@ -1,5 +1,4 @@
 export const initialStructure = (drawSquare, context, arrDimensions) => {
-
   // pulsar
   drawSquare(10, 10, context) // top left
   drawSquare(11, 10, context)
@@ -17,7 +16,7 @@ export const initialStructure = (drawSquare, context, arrDimensions) => {
   drawSquare(11, 5, context)
   drawSquare(10, 5, context)
 
-  drawSquare(10 + 5, 10, context)  // top right
+  drawSquare(10 + 5, 10, context) // top right
   drawSquare(11 + 5, 10, context)
   drawSquare(12 + 5, 10, context)
 
@@ -46,4 +45,3 @@ export const initialStructure = (drawSquare, context, arrDimensions) => {
 
   return frame
 }
-

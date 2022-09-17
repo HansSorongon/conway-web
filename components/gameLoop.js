@@ -1,5 +1,4 @@
 export const gameLoop = (drawSquare, context, frame) => {
-
   let newFrame = []
 
   for (let i = 0; i < frame.length; i++) {
@@ -9,4 +8,3 @@ export const gameLoop = (drawSquare, context, frame) => {
     }
   }
 }
-
