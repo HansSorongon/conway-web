@@ -1,234 +1,106 @@
-import { useRef, useEffect } from 'react'
-import { Box } from '@chakra-ui/react'
+import Head from 'next/head'
+import Image from 'next/image'
+import styles from '../styles/Home.module.css'
 
-const Canvas = () => {
-  const canvasRef = useRef(null)
+import { useCallback, useState, useRef, useEffect } from 'react'
+import { Box, Container } from '@chakra-ui/react'
 
-  //globals
-  const squareHeight = 30
-  const squareWidth = 40
+const numCols = 70
+const numRows = 50
 
-  let tick = 0
-  let frame = [
-    { x: 18, y: 16 },
-    { x: 17, y: 15 },
-    { x: 16, y: 16 },
-    { x: 22, y: 16 },
-    { x: 22, y: 17 },
-    { x: 24, y: 16 },
-  ]
+const operations = [
+  [0, 1],
+  [0, -1],
+  [1, -1],
+  [-1, 1],
+  [1, 1],
+  [-1, -1],
+  [1, 0],
+  [-1, 0],
+]
 
-  let newFrame = []
-  let i = 1
-
-  const render = (arrWidth, arrHeight, initFrame) => {
-    // -------------------------------------- animation loop
-
-    const canvas = canvasRef.current
-    canvas.width = window.innerWidth * 2
-    canvas.height = window.innerHeight * 2
-    canvas.style.width = window.innerWidth
-    canvas.style.height = window.innerHeight
-    const context = canvas.getContext('2d')
-    // end of canvas context
-
-    const drawSquare = (x, y) => {
-      context.fillStyle = '#7f7f7f'
-      context.fillRect(
-        x * squareWidth,
-        y * squareHeight,
-        squareWidth,
-        squareHeight
-      )
+const Canvas = (props) => {
+  const [grid, setGrid] = useState(() => {
+    const rows = []
+    for (let i = 0; i < numRows; i++) {
+      rows.push(Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0)))
     }
 
-    // grid
-    const drawGrid = (width, height) => {
-      for (let i = 1; i <= Math.floor(width / 40); i++) {
-        context.beginPath()
-        context.moveTo(i * squareWidth, 0)
-        context.lineTo(i * squareWidth, height)
-        context.strokeStyle = 'white'
-        context.lineWidth = 1
-        context.stroke()
+    return rows
+  })
 
-        context.beginPath()
-        context.moveTo(0, i * squareHeight)
-        context.lineTo(width, i * squareHeight)
-        context.strokeStyle = 'white'
-        context.lineWidth = 1
-        context.stroke()
-      }
-    }
-
-    drawGrid(canvas.width, canvas.height)
-
-    // all blocks go here
-    // if (frame) {
-    //   gameLoop(drawSquare, context, frame)
-    // }
-
-    // initialize
-
-    // frame change
-    if (i % 200 == 0) {
-      for (let cell of frame) {
-        // switch to use i based for loop for performance
-        let liveNeighbors = 0
-        for (let posNeigh of frame) {
-          // count number of neighbors
-          // checks if adjacent neighbor is alive
-          if (cell['x'] + 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) {
-            // if on the right
-            liveNeighbors++
-          } else {
-            // need to clear something, some cells getting added for no reason.
-
-            let neighbors = 0
-            for (let posAdj of frame) {
-              if (cell['x'] == posAdj['x'] && cell['y'] - 1 == posAdj['y']) {
-                // tl
-                neighbors++
-              }
-              if (
-                cell['x'] + 1 == posAdj['x'] &&
-                cell['y'] - 1 == posAdj['y']
-              ) {
-                // t
-                neighbors++
-              }
-              if (
-                cell['x'] + 2 == posAdj['x'] &&
-                cell['y'] - 1 == posAdj['y']
-              ) {
-                // tr
-                neighbors++
-              }
-              if (cell['x'] + 2 == posAdj['x'] && cell['y'] == posAdj['y']) {
-                // r
-                neighbors++
-              }
-              if (cell['x'] == posAdj['x'] && cell['y'] + 1 == posAdj['y']) {
-                // bl
-                neighbors++
-              }
-              if (
-                cell['x'] + 1 == posAdj['x'] &&
-                cell['y'] + 1 == posAdj['y']
-              ) {
-                // b
-                neighbors++
-              }
-              if (
-                cell['x'] + 2 == posAdj['x'] &&
-                cell['y'] + 1 == posAdj['y']
-              ) {
-                // br
-                neighbors++
-              }
-              if (neighbors === 2) {
-                newFrame.push({ x: cell['x'] + 1, y: cell['y'] })
-              }
-            }
-          }
-
-          if (cell['x'] - 1 == posNeigh['x'] && cell['y'] == posNeigh['y']) {
-            // if on the left
-            liveNeighbors++
-          }
-          if (cell['x'] == posNeigh['x'] && cell['y'] + 1 == posNeigh['y']) {
-            // if on the bottom
-            liveNeighbors++
-          }
-          if (cell['x'] == posNeigh['x'] && cell['y'] - 1 == posNeigh['y']) {
-            // if on the top
-            liveNeighbors++
-          }
-          if (
-            cell['x'] - 1 == posNeigh['x'] &&
-            cell['y'] - 1 == posNeigh['y']
-          ) {
-            // if on the top left
-            liveNeighbors++
-          }
-          if (
-            cell['x'] + 1 == posNeigh['x'] &&
-            cell['y'] - 1 == posNeigh['y']
-          ) {
-            // if on the top right
-            liveNeighbors++
-          }
-          if (
-            cell['x'] - 1 == posNeigh['x'] &&
-            cell['y'] + 1 == posNeigh['y']
-          ) {
-            // if on the bottom left
-            liveNeighbors++
-          }
-          if (
-            cell['x'] + 1 == posNeigh['x'] &&
-            cell['y'] + 1 == posNeigh['y']
-          ) {
-            // if on the bottom right
-            liveNeighbors++
-          }
-        }
-
-        const isFound = newFrame.some((element) => {
-          if (element.x == cell['x'] && element.y == cell['y']) {
-            return true
-          }
-          return false
-        })
-
-        // check if cell should stay alive UNCOMMENT THIS
-        if (liveNeighbors === 2 || liveNeighbors === 3) {
-          if (!isFound) {
-            newFrame.push(cell)
-          }
-        }
-
-        // this algo doesn't have frame garbage collection yet so fix this shit
-        // later
-      } // end for
-
-      frame = newFrame
-    } // end if
-    i++
-
-    newFrame = [] // THIS IS CRUCIAL //
-
-    for (let cell of frame) {
-      drawSquare(cell['x'], cell['y'])
-    }
-
-    tick++
-
-    requestAnimationFrame(render)
+  const produce = (grid, callback) => {
+    const newgrid = JSON.parse(JSON.stringify(grid))
+    callback(newgrid)
+    return newgrid
   }
 
-  useEffect(() => {
-    if (!canvasRef.current) return
+  const [running, setRunning] = useState(false)
 
-    let arrWidth = Math.floor(canvasRef.current.width / squareWidth) // initializing to 5 and 7 for some reason
-    let arrHeight = Math.floor(canvasRef.current.height / squareHeight)
+  const runningRef = useRef()
+  runningRef.current = running
 
-    // form initial 2d-array here
-    //
+  const runSimulation = useCallback(() => {
+    if (!runningRef.current) {
+      return
+    }
+    setGrid((g) => {
+      return produce(g, (gridCopy) => {
+        for (let i = 0; i < numRows; i++) {
+          for (let k = 0; k < numCols; k++) {
+            let neighbors = 0
 
-    requestAnimationFrame(render, arrWidth, arrHeight)
+            operations.forEach(([x, y]) => {
+              const newI = i + x
+              const newK = k + y
+              if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
+                neighbors += g[newI][newK]
+              }
+            })
+
+            if (neighbors < 2 || neighbors > 3) {
+              gridCopy[i][k] = 0
+            } else if (g[i][k] === 0 && neighbors === 3) {
+              gridCopy[i][k] = 1
+            }
+          }
+        }
+      })
+    })
   }, [])
 
+  useEffect(() => {
+    runningRef.current = true
+    runSimulation()
+  }, [grid])
+
   return (
-    <Box
-      bg="black"
-      h="calc(150vh)"
-      w="100%"
-      position="absolute"
-      display="flex"
-      justifyContent="center"
-    >
-      <canvas fillStyle="white" ref={canvasRef} style={{ width: '100%' }} />
+    <Box bg="black" {...props}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${numCols}, 20px)`,
+        }}
+      >
+        {grid.map((rows, i) =>
+          rows.map((col, k) => (
+            <div
+              key={`${i}-${k}`}
+              onClick={() => {
+                const newgrid = produce(grid, (newgrid) => {
+                  newgrid[i][k] = 1 - newgrid[i][k]
+                })
+                setGrid(newgrid)
+              }}
+              style={{
+                width: '20px',
+                height: '20px',
+                backgroundColor: grid[i][k] ? '#858585' : 'black',
+              }}
+            />
+          ))
+        )}
+      </div>
     </Box>
   )
 }
