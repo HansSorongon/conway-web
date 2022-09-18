@@ -1,12 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-
 import { useCallback, useState, useRef, useEffect } from 'react'
-import { Box, Container } from '@chakra-ui/react'
+import { Box, Button } from '@chakra-ui/react'
 
-const numCols = 70
-const numRows = 50
+const numCols = 74
+const numRows = 60
 
 const operations = [
   [0, 1],
@@ -23,8 +19,67 @@ const Canvas = (props) => {
   const [grid, setGrid] = useState(() => {
     const rows = []
     for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0)))
+      rows.push(Array.from(Array(numCols), () => 0))
     }
+
+    rows[10][10] = 1
+    rows[11][10] = 1
+    rows[12][10] = 1
+    rows[10][11] = 1
+    rows[11][9] = 1
+
+    rows[10 + 10][10] = 1
+    rows[11 + 10][10] = 1
+    rows[12 + 10][10] = 1
+    rows[10 + 10][9] = 1
+    rows[11 + 10][11] = 1
+
+    rows[10 + 25][10] = 1
+    rows[11 + 25][10] = 1
+    rows[12 + 25][10] = 1
+    rows[10 + 25][11] = 1
+    rows[11 + 25][9] = 1
+
+
+    rows[25 - 18][25 + 15] = 1
+    rows[25 - 18][26 + 15] = 1
+    rows[25 - 18][27 + 15] = 1
+    rows[24 - 18][27 + 15] = 1
+    rows[23 - 18][26 + 15] = 1
+
+    rows[8][57] = 1
+    rows[9][57] = 1
+    rows[10][57] = 1
+
+    rows[8][59] = 1
+    rows[9][59] = 1
+    rows[10][59] = 1
+
+    rows[14][57] = 1
+    rows[15][57] = 1
+    rows[16][57] = 1
+
+    rows[14][59] = 1
+    rows[15][59] = 1
+    rows[16][59] = 1
+
+    rows[13][60] = 1
+    rows[13][61] = 1
+    rows[13][62] = 1
+
+    rows[7 + 20][60] = 1
+    rows[8 + 20][60] = 1
+    rows[9 + 20][61] = 1
+    rows[9 + 20][59] = 1
+    rows[10 + 20][60] = 1
+    rows[11 + 20][60] = 1
+    rows[12 + 20][60] = 1
+    rows[13 + 20][60] = 1
+    rows[14 + 20][59] = 1
+    rows[14 + 20][61] = 1
+    rows[15 + 20][60] = 1
+    rows[16 + 20][60] = 1
+
 
     return rows
   })
@@ -44,8 +99,8 @@ const Canvas = (props) => {
     if (!runningRef.current) {
       return
     }
-    setGrid((g) => {
-      return produce(g, (gridCopy) => {
+    setGrid(g => {
+      return produce(g, gridCopy => {
         for (let i = 0; i < numRows; i++) {
           for (let k = 0; k < numCols; k++) {
             let neighbors = 0
@@ -70,9 +125,13 @@ const Canvas = (props) => {
   }, [])
 
   useEffect(() => {
-    runningRef.current = true
-    runSimulation()
+    // setRunning(!running)
+    if (!running) {
+      runningRef.current = true
+      runSimulation()
+    }
   }, [grid])
+
 
   return (
     <Box bg="black" {...props}>
