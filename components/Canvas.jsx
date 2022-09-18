@@ -1,5 +1,6 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Button, useMediaQuery } from '@chakra-ui/react'
+
 
 const numCols = 74
 const numRows = 60
@@ -148,6 +149,10 @@ const Canvas = (props) => {
               onClick={() => {
                 const newgrid = produce(grid, (newgrid) => {
                   newgrid[x][y] = 1 - newgrid[x][y]
+                  newgrid[x][y+1] = 1 - newgrid[x][y+1]
+                  newgrid[x+1][y] = 1 - newgrid[x+1][y]
+                  newgrid[x+2][y] = 1 - newgrid[x+2][y]
+                  newgrid[x+1][y-1] = 1 - newgrid[x+1][y-1]
                 })
                 setGrid(newgrid)
               }}

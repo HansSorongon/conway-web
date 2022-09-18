@@ -10,7 +10,7 @@ const Home = () => {
       <Head>
         <title>Conway&apos;s Game of Life</title>
       </Head>
-      <Flex position="absolute" justifyContent="center" w="100%">
+      <Flex position="absolute" justifyContent="center" w="100%" style={{pointerEvents: 'none'}}>
         <Flex color="white" w="50%" alignItems="center" direction="column">
           <Flex
             border="3px solid white"
@@ -25,17 +25,20 @@ const Home = () => {
               <Image src="title.svg" />
             </Box>
             <Container p="0px" bg="black">
+              <Flex direction='column' alignItems='center'>
               <Heading
                 as="h5"
                 fontSize="25px"
                 fontFamily="fira mono"
                 mt="16px"
-                p="15px"
+                px="15px"
+                pb="17px"
                 pt="18px"
                 rounded={15}
               >
                 What is Conway&apos;s Game of Life?
               </Heading>
+              <Box w='90%' border='1px solid white' justifySelf='center'/>
               <TextBox>
                 Conway&apos;s Game of Life also known as Life, is a simulation
                 following a set number of rules to mirror cellular life. It was
@@ -46,6 +49,7 @@ const Home = () => {
                 examples of patterns include: still-lifes, oscillators, and
                 spaceships.
               </TextBox>
+              </Flex>
             </Container>
           </Flex>
         </Flex>
