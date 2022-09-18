@@ -82,20 +82,20 @@ const Canvas = (props) => {
           gridTemplateColumns: `repeat(${numCols}, 20px)`,
         }}
       >
-        {grid.map((rows, i) =>
-          rows.map((col, k) => (
+        {grid.map((rows, x) =>
+          rows.map((col, y) => (
             <div
-              key={`${i}-${k}`}
+              key={`${x}-${y}`}
               onClick={() => {
                 const newgrid = produce(grid, (newgrid) => {
-                  newgrid[i][k] = 1 - newgrid[i][k]
+                  newgrid[x][y] = 1 - newgrid[x][y]
                 })
                 setGrid(newgrid)
               }}
               style={{
                 width: '20px',
                 height: '20px',
-                backgroundColor: grid[i][k] ? '#858585' : 'black',
+                backgroundColor: grid[x][y] ? '#858585' : 'black',
               }}
             />
           ))
