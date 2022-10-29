@@ -1,7 +1,6 @@
 import { useCallback, useState, useRef, useEffect } from 'react'
 import { Box, Button, useMediaQuery } from '@chakra-ui/react'
 
-
 const numCols = 74
 const numRows = 60
 
@@ -40,7 +39,6 @@ const Canvas = (props) => {
     rows[12 + 25][10] = 1
     rows[10 + 25][11] = 1
     rows[11 + 25][9] = 1
-
 
     rows[25 - 18][25 + 15] = 1
     rows[25 - 18][26 + 15] = 1
@@ -81,7 +79,6 @@ const Canvas = (props) => {
     rows[15 + 20][60] = 1
     rows[16 + 20][60] = 1
 
-
     return rows
   })
 
@@ -100,8 +97,8 @@ const Canvas = (props) => {
     if (!runningRef.current) {
       return
     }
-    setGrid(g => {
-      return produce(g, gridCopy => {
+    setGrid((g) => {
+      return produce(g, (gridCopy) => {
         for (let i = 0; i < numRows; i++) {
           for (let k = 0; k < numCols; k++) {
             let neighbors = 0
@@ -133,7 +130,6 @@ const Canvas = (props) => {
     }
   }, [grid])
 
-
   return (
     <Box bg="black" {...props}>
       <div
@@ -149,10 +145,10 @@ const Canvas = (props) => {
               onClick={() => {
                 const newgrid = produce(grid, (newgrid) => {
                   newgrid[x][y] = 1 - newgrid[x][y]
-                  newgrid[x][y+1] = 1 - newgrid[x][y+1]
-                  newgrid[x+1][y] = 1 - newgrid[x+1][y]
-                  newgrid[x+2][y] = 1 - newgrid[x+2][y]
-                  newgrid[x+1][y-1] = 1 - newgrid[x+1][y-1]
+                  newgrid[x][y + 1] = 1 - newgrid[x][y + 1]
+                  newgrid[x + 1][y] = 1 - newgrid[x + 1][y]
+                  newgrid[x + 2][y] = 1 - newgrid[x + 2][y]
+                  newgrid[x + 1][y - 1] = 1 - newgrid[x + 1][y - 1]
                 })
                 setGrid(newgrid)
               }}
